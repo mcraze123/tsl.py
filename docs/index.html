@@ -1,0 +1,818 @@
+<html>
+<head>
+<title>Quozl's Temperature Sensor Project</title>
+<LINK rel="stylesheet" type="text/css" href="../qos.css"> 
+</head>
+<body>
+<table width="100%">
+<tr>
+<td>
+<h1>Quozl's Temperature Sensor Project</h1>
+</td>
+<td>
+<div align=right>
+| <a href=mailto:quozl@us.netrek.org><i>quozl@us.netrek.org</i></a>
+| <a href=../>up</a> |
+</div>
+</td>
+</tr>
+</table>
+<p>
+
+
+<h2>Contents</h2>
+
+<ul>
+<li><a href=#features>Features</a>
+<li><a href=#applications>Applications</a>
+<li><a href=#availability>Availability</a>
+<li><a href=#schematic>Circuit Schematic</a>
+<li><a href=#operation>Theory of Operation</a>
+<li><a href=#usage>Usage Instructions</a>
+<li><a href=#design>Design Discussion</a>
+<li><a href=#parts>Parts List</a>
+<li><a href=#software>Logging Software</a>
+<li><a href=#license>License</a>
+<li><a href=#faq>Frequently Asked Questions</a>
+</ul>
+
+<hr noshade>
+<h2>Missing Characters</h2>
+<div align=right>25 Nov 2010</div><p>
+
+There have been a couple of reports of missing digits in the data
+stream from the microcontroller to the host.<p>
+
+I have a theory.  The PIC 12C509 is meant to be programmed in a
+specific way by the seller.  The code space contains a preprogrammed
+calibration constant for the internal R/C oscillator.  The
+instructions that I provided to the original seller Kitsrus
+specifically excluded the memory address for the calibration constant,
+so that the constant set in chip manufacturing process would be left
+intact.<p>
+
+However, if someone has later attempted to duplicate the code from one
+PIC 12C509 to another, this might result in an incorrect calibration
+constant for the oscillator.  It is impractical to correct, since the
+PIC 12C509 with plastic top is a one-time-programmed part.<p>
+
+As a result, the asynchronous serial data would not exactly match the
+baud rate expected by the serial port.  Characters would be
+dropped.<p>
+
+If you were to analyse the electrical signal on the serial port, and
+compare the timing against the baud rate, you may find that is the
+cause of the problem.<p>
+
+Of course, the timing source in your serial port, or USB to serial
+converter might also be a source of the symptom!<p>
+
+<hr noshade>
+<h2>Assembling on Recent Versions of GPASM</h2>
+<div align=right>02 Nov 2009</div><p>
+
+gpasm has changed since this project began, and rather than obtain an
+old version, you can use a current version of gpasm.  You need certain
+flags:<p>
+
+<pre>
+gpasm --ignore-case \
+      --processor 12C509 \
+      --warning 1 \
+      ds1820.asm
+</pre>
+
+That said, I've not tested that it works on chip!
+
+<hr noshade>
+<h2>Using a USB to Serial Adaptor</h2>
+<div align=right>17 May 2009</div><p>
+
+George asked <i>I already own a temperature kit (it works perfect in
+my serial port) and I would like to know if it is compatible with USB
+to Serial adapters?</i><p>
+
+Perhaps.  The original design was not compatible with all serial ports,
+and so it is entirely possible that it might not be compatible with some
+USB to serial adapters.<p>
+
+If you're able to see into the adaptor and detect a small integrated
+circuit of about 16 pins that is labelled MAX232 with about four
+capacitors around it, then it is likely to work.  The MAX232 or
+equivalent raise the operating voltage to meet the standard.<p>
+
+If you are able to test the adapter first by measuring the voltage of a
+signal line like DTR with respect to the GND pin, (this will be non-zero
+just by plugging it in to a USB port, no application should need to be
+run), ... if you get around 5V, then it probably won't power the
+temperature kit well ... but if you get around 12V it should work fine.<p>
+
+You can also modify the temperature sensor kit for an external 12V DC
+supply, by disconnecting the DTR trace from the connector to the
+diode, and connecting 12V DC there.  Instead of powering the
+microcontroller and sensors from the DTR signal, it will be powered
+from your external source.<p>
+
+You can also modify the temperature sensor kit to use the USB supply
+voltage, by connecting the 5V line from the USB cable (the computer side
+of the USB to serial adaptor) to the 5V *output* of the voltage
+regulator.<p>
+
+<hr noshade>
+<h2>Report GNU GPL License Violations</h2>
+<div align=right>30 April 2007</div><p>
+
+As the copyright owner of ds1820.asm below, which is licensed under
+the GNU General Public License, I would like to hear from anyone who
+has purchased a microcontroller which contains a work derived from
+this, and who has not been able to obtain the source code of the
+version on the chip.<p>
+
+The information I would like you to include:<p>
+<ol>
+<li>who you are, including your postal address,
+<li>who you purchased it from, and when,
+<li>what price you paid,
+<li>whether the included documentation referred you to me or my web site,
+<li>how you tried to obtain the source from the seller,
+<li>what the seller's response was,
+<li>on what basis you believe it is derived from my work.
+</ol>
+
+In addition, if you have obtained the source code, and it is clearly
+derived from my work, I'd like to receive a copy of it so that I can
+improve the project.  Please let me know how I can receive a copy.<p>
+
+James Cameron.<p>
+
+<hr noshade>
+<h2>Darcs Repository and Debian packages for tsl</h2>
+<div align=right>29th July 2006</div><p>
+
+Want to contribute to tsl, or run it on Debian?
+
+<ul>
+<li><a href="http://quozl.linux.org.au/darcs/tsl/">http://quozl.linux.org.au/darcs/tsl/</a> is a <a href="http://darcs.net/">Darcs</a> repository of tsl, patches are welcome,
+<li><a href="http://quozl.linux.org.au/packages/">http://quozl.linux.org.au/packages/</a> contains packages for Debian GNU/Linux.
+</ul>
+
+<hr noshade>
+<h2>Lost Mailing List</h2>
+<div align=right>6th February 2006</div><p>
+
+Quozl continues to get mail about this project.  This is quite
+encouraging!  But he lost the mailing list and doesn't plan to recover
+it.If you are wanting help, or are willing to help others, please
+visit the <a href="http://james.tooraweenah.com/moin/ts">project
+community page</a>.
+<p>
+<hr noshade>
+
+
+
+<h2>Introduction</h2>
+Just a handful of components builds an 8-pin microcontroller based
+circuit for temperature logging via a serial port; small, fast, and
+acceptably accurate.<p>
+
+<img border=0 src=kit.jpg width=332 height=311
+alt="prototype from kitsrus">
+
+<hr noshade>
+<h2><a name=features>Features</a></h2>
+
+<ul>
+<li>provides real-time data to your computer via serial port,
+<li>interfaces up to four DS1820 temperature sensors,
+<li>absolute accuracy near 0.5 degrees celcius (as per DS1820 specifications),
+<li>relative accuracy near 0.01 degrees celcius,
+<li>speaks in Centigrade or Fahrenheit (selectable by header pins),
+<li>powered by your computer's serial port, no extra supply to organise,
+<li>data format easily processed, no special programs required,
+<li>minimal parts count reduces cost,
+<li>built-in serial number for circuit identification,
+<li>special versions available for exotic requirements; high speed,
+low speed, additional sensors, long distance or pedantic serial bus.
+<li>spare inputs can be used as single-bit digital inputs, (feature removed from final version but can be re-inserted),
+</ul>
+
+<hr noshade>
+<h2><a name=applications>Applications</a></h2>
+
+A few ideas of how this circuit can be used:
+
+<ul>
+<li>simple weather reports for web pages,
+<li>computer power supply temperature warnings,
+<li>redundant critical systems monitoring,
+<li>house temperature monitoring,
+<li>complex home automation tasks (start fan if warmer outside during winter),
+<li>refrigerator testing,
+<li>brewing temperature regulation,
+<li>fish tank heater verification,
+<li>microclimate logging (ground versus air temperature),
+<li>daylight sensing (LDR on digital input),
+<li>primitive locking (using serial number),
+<li>remote monitoring of <a href=emu.html>emu fat in a freezer truck</a>,
+</ul>
+
+<hr noshade>
+<h2><a name=availability>Availability</a></h2>
+
+The electronics kit maker <a href=http://kitsrus.com/>Kitsrus</a> has
+released a PCB and kit of this design.  Other kit sellers also sell
+the kit.  Here is a summary:<p>
+
+
+<center>
+<table cellpadding=4 cellspacing=1 bgcolor=#000000>
+<tr bgcolor=#e8ffff>
+<th>
+Country
+</th>
+<th>
+Organisation
+</th>
+<th>
+Item Number
+</th>
+<th>
+GPL Compliance
+</th>
+<th>
+Date Checked
+</th>
+</tr>
+
+<tr bgcolor=#e8ffff>
+<td>
+Australia
+</td>
+<td>
+<a href=http://ozitronics.com/>Ozitronics</a>
+</td>
+<td>
+<a href=http://ozitronics.com/data.html#k145>K145</a>
+</td>
+<td>
+Complete
+</td>
+<td>
+13th June 2003
+</td>
+</tr>
+
+<tr bgcolor=#e8ffff>
+<td>
+United States of America
+</td>
+<td>
+<a href=http://www.electronickits.com/>Carl's Electronics Inc</a>
+</td>
+<td>
+<a href=http://www.electronickits.com/kit/complete/meas/ck110.htm>CK110</a>
+</td>
+<td>
+<a href=#license title="the page links to this page for further information, but does not explicitly state that the source code is available">Partial</a>
+</td>
+<td>
+13th June 2003
+</td>
+</tr>
+
+<tr bgcolor=#e8ffff>
+<td>
+Kingston, Ontario, Canada
+</td>
+<td>
+<a href=http://www.qkits.com/>QKits</a>
+</td>
+<td>
+<a href=http://www.qkits.com/serv/qkits/diy/pages/QK145.asp>QK145</a>
+</td>
+<td>
+Complete
+</td>
+<td>
+13th June 2003
+</td>
+</tr>
+
+<tr bgcolor=#e8ffff>
+<td>
+Hong Kong
+<td>
+<a href=http://kitsrus.com/>Kitsrus</a>
+</td>
+<td>
+<a href="http://kitsrus.com/kits.html#k145">K145</a>
+</td>
+<td>
+Complete
+</td>
+<td>
+13th June 2003
+</td>
+</tr>
+
+<tr bgcolor=#e8ffff>
+<td>
+Denmark
+<td>
+<a href=http://eekit.dk/>eekit.dk</a>
+</td>
+<td>
+<a href="http://www.eekit.dk/product.asp?product=426">0104-K145</a>
+</td>
+<td>
+<a href=#license title="the page links to this page for further information, but does not explicitly state that the source code is available">Partial</a>
+</td>
+<td>
+29th November 2004
+</td>
+</tr>
+
+
+
+</table>
+</center>
+
+<p>
+(If you also sell this kit, and you would like to be added to the
+list, please <a href=mailto:quozl@us.netrek.org>write to me</a>, including your country, organisation name,
+links to your web site and to the kit page.  There is no reciprocal link
+condition.  You may be asked to provide a link to this page, but that
+is for compliance with the <a href=#license>software license</a>.)<p>
+
+
+<hr noshade>
+<h2><a name=schematic>Circuit Schematic</a></h2>
+
+<img src=schematic.jpg width=956 height=572>
+
+<hr noshade>
+<h2><a name=operation>Theory of Operation</a></h2>
+
+The program in the microcontroller knows two protocols; the one wire
+bus used by the DS1820 temperature sensor, and the serial protocol
+expected by your computer.  Once power is applied, the program fetches
+data from the sensors and sends it to the serial port, repeatedly.<p>
+
+The data from the DS1820 arrives in a format peculiar to the sensor.
+The program calculates the temperature from the data and translates it
+into human readable ASCII digits.  No special program is required on
+the computer.<p>
+
+<hr noshade>
+<h2><a name=usage>Usage Instructions</a></h2>
+
+Plug the circuit into the serial port of a computer.  Persuade the
+computer to expect serial data at 2400 baud, 8 bits, no parity, one or
+two stop bits.  Ask the computer to raise the DTR signal.  (See below
+for software that will do this for you.)  The microcontroller will
+start talking to the connected DS1820 sensors and the circuit should
+begin transmitting data to the computer.  For example:<p>
+
+<table>
+<tr>
+<td>
+<pre>
+     R V1.0 1999-12-21 22:05:03 C
+     1 0022.50
+     2 0022.47
+     3 0022.52
+     4 0022.53
+</pre>
+</td>
+</tr>
+</table>
+
+The first line sent by the microcontroller is a reset notification,
+which includes the microcode version, a date and time serial number,
+and either a C or an F, depending on the GP3 pin at the time.  <p>
+
+The sensor data is reported in the international standard Centigrade
+if the GP3 pin is tied low.  If it is tied high, then the data is
+converted to Fahrenheit.  A larger range and accuracy is obtained from
+running in Centigrade mode; users are advised to make their
+conversions within the attached computer.  <p>
+
+<p>
+
+Other hints for operation:
+<ul>
+
+<li><i>(if you have one of the special versions)</i> to use an input
+pin as a simple digital input, connect it to the supply pin (pin 1)
+via a resistor of about 10k, and connect a switch between the pin and
+the ground pin (pin 8) through a resistor of about 1k.  When the
+switch is closed a zero will be read.  Avoid shorting the pin directly
+to the supply, as the microcontroller may attempt to pull it low
+during the test for a DS1820 sensor.<p>
+
+<li>a 10uF tantalum capacitor across the power supply pins of the
+DS1820 chips tends to provide more consistent measurements.  To put
+it another way, if you remove it you may get random error in the
+samples.<p>
+
+</ul>
+
+<hr noshade>
+<h2><a name=design>Design Discussion</a></h2>
+
+Some people will have a number of comments about my design.  Please
+remember I'm an amateur electronics enthusiast and a professional
+software engineer.<p>
+
+Why not operate the DS1820 sensors on a bus instead of per port?
+There is insufficient memory within the microcontroller to remember
+the device address for more than one or two sensors.  It is simple to
+remember which pin is being addressed.<p>
+
+This circuit may not work with some serial ports.  One reason is that
+the voltage swing of the transmit data to the computer is not within
+specification, however the detection band for most serial ports
+accepts it.<p>
+
+No protection is present for lightning damage.  Adding this protection
+is beyond my skill.  Users should disconnect the device before
+experiencing lightning if the cabling is of significant length.<p>
+
+The 78L05 regulator may not be able to regulate properly if the
+current and voltage provided by the serial port DTR pin is
+insufficient.  Ideally this should be a more expensive low drop
+regulator, or a zener diode instead.  Symptoms of insufficient voltage
+are loss of the start of the verbose reset packet.<p>
+
+The 1N4003 diode could be replaced with a diode having a lower voltage
+drop.<p>
+
+In fact, the DTR line could be just connected to the 12V supply rail
+within the computer itself in order to get around most of the power
+problems.<p>
+
+Why isn't there a MAX232 or other chip to change the signal levels
+from 0V to +15V and 5V to -15V as required by the EIA232 standard used
+by computer serial ports?  Almost all serial ports are offset such
+that voltages above 4V are recognised as being logic 0, and voltages
+below 1V as logic 1.  This allows external devices the ability to
+violate the standard by sending an inverted 0V/5V signal.<p>
+
+This means the device is not suitable for long cable runs, and may not
+work with all serial ports.  However the author has tested the device
+on more than 30 ports with no issues.<p>
+
+<hr noshade>
+<h2><a name=parts>Parts List</a></h2>
+
+Where "<i>n</i>" is the number of sensors you wish to use:
+<ul>
+<li>preprogrammed PIC 12C509 microcontroller chip,
+<li>1N4003 diode,
+<li>78L05 voltage regulator,
+<li>100uF electrolytic capacitor,
+<li><i>n+1</i> 10uF tantalum capacitors 10V,
+<li><i>n</i> DS1820 sensors,
+<li><i>n</i> 2.2k pull-up resistors,
+<li>printed circuit board,
+<li>female 9-pin or 25-pin D connector,
+<li>cable.
+</ul>
+
+Optional parts for transmit indicator (between output pin and ground):
+<ul>
+<li>LED,
+<li>1k resistor.
+</ul>
+
+<hr noshade>
+<h2><a name=software>Software</a></h2>
+
+<ul>
+  <li>Temperature Sensor Data Logger 1.2,<p>
+
+  Accepts temperature data from the circuit and periodically logs the
+  values to a disk file.  The file is named with the current year and
+  day number, e.g. 2000070.log, and is formatted as a comma separated
+  value (CSV) list.  You are expected to use other software to analyse
+  the data collected.  Full source code is provided under the GPL
+  license.<p>
+
+  <ul>
+
+    <li><a href=tsl11win.zip>tsl11win.zip</a> for Microsoft Windows.
+    Tested on Microsoft Windows 95, Microsoft Windows 98 Second
+    Edition, Microsoft Windows 2000 SP1, and Microsoft Windows NT 4.0 SP6.
+    Unpack the ZIP file into a directory and run TSL.EXE.<p>
+
+    <li><a href=tsl11dos.zip>tsl11dos.zip</a> for FreeDOS or MS-DOS.
+    Tested on MS-DOS 4.00.950 on a 386/25 using floppy disk only, and
+    on a machine with a hard drive.  With floppy disk, do not exceed a
+    logging rate of once every two seconds.  Unpack the ZIP file onto
+    a bootable floppy or a hard disk directory, then run TSL.EXE.  If
+    you have no hard disk partition, ignore the warning message about
+    "c:\cwsdpmi.swp".<p>
+
+    <li><a href=tsl-1.2.tar.gz>tsl-1.2.tar.gz</a> source code for all
+    three versions above.  Requires CYGWIN to build the Microsoft
+    Windows version.  Requires DJGPP to build the FreeDOS/MS-DOS
+    version.  Use this version on Linux; just unpack the tar.gz file
+    and type "make".  Includes a file ChangeLog that describes the
+    changes made to each released version.<p>
+
+    <li><a
+href="http://quozl.linux.org.au/packages/">http://quozl.linux.org.au/packages/</a>
+contains packages for Debian GNU/Linux.<p>
+
+    <li><a
+href="http://quozl.linux.org.au/darcs/tsl/">http://quozl.linux.org.au/darcs/tsl/</a>
+is a <a href="http://darcs.net/">Darcs</a> repository of tsl, patches
+are welcome.<p>
+
+  </ul>
+
+  <li>Graphical Temperature Sensor Data Logger 0.1,<p>
+
+  Accepts temperature data from the circuit and displays them on four
+  horizontal sliders.  Provides an option for resetting the
+  microcontroller by lowering DTR, and has logic to detect lack of
+  data flow.  Currently does no logging (use the program above).  Full
+  source code is provided under the GPL license.<p>
+
+  <img src=gtsl.jpg width=354 height=189>
+  <p>
+
+  <ul>
+
+    <li><a href=gtsl-0.1.tar.gz>gtsl-0.1.tar.gz</a> for Linux, tested
+    on Red Hat Linux V6.1, with GTK+ V1.2.6.  Unpack, ./configure,
+    "make", "make install", attach the circuit to the first serial
+    port and run gtsl.<p>
+
+  </ul>
+
+  <li>Serial Temperature Sensor 1.0,<p>
+
+  For programming your own PIC 12C509 microcontroller.<p>
+
+  Drives the DS1820 sensors, obtains temperature readings, converts
+  them to ASCII and sends them through the serial cable.  Full source
+  code provided, under the GPL license.  Code was written to assemble
+  using gpasm-0.0.6.<p>
+
+  <ul>
+    <li><a href=ds1820.asm>ds1820.asm</a><p>
+    <li><a href=ds1820-gpasm.patch>ds1820-gpasm.patch</a> patch to
+    make code assemble without error under gpasm-0.9.13.  The
+    resultant HEX file has not been tested.<p>
+    <li><a href=ds18b20.asm>ds18b20.asm</a> variation not yet tested to support DS18B20 sensors<p>
+
+  </ul>
+
+  Note: the code assembles with errors on 16F84, using certain
+  versions of MPASM, because the <tt>TRIS</tt> instruction operand is
+  only three bits wide, and the constant TRISB has bits set beyond
+  that mask.  Change the line from <tt>TRIS TRISB</tt> to <tt>TRIS
+  PORTB</tt>.  (Contributed by John S.)<p>
+
+  <li><a href=/darcs/tsl/tsl.py>Asgeir Nilsen's
+Python tsl.py</a> a simplified rewrite of tsl in Python.<p>
+
+</ul>
+
+<hr noshade>
+<h2><a name=license>License</a></h2>
+
+The source code for the microcontroller program was released on 1st
+January 2002 under the GNU General Public License.  You have the right
+to manufacture and sell duplicates, though under the license terms you
+<i>must</i> supply the source code.<p>
+
+I'm happy for you to provide a link to this web page as your way of
+supplying the source code.  Something like this:<p>
+
+<center>
+<table width=50% cellpadding=4 cellspacing=1 bgcolor=#000000>
+<tr bgcolor=#e8ffff>
+<td>
+The source code for the software inside the microcontroller is &lt;a
+href="http://quozl.netrek.org/ts/"&gt;available from the
+developer&lt;/a&gt;.
+</td>
+</tr>
+</table>
+</center>
+<p>
+
+(Before the release, by purchasing the pre-programmed chip, you had
+purchased the right to use the software on the chip.  You had not
+purchased any right to manufacture duplicates.  The chips were
+programmed with the Code Protect bits set.)<p>
+
+Unlike most of my other work here, this project wasn't originally Open
+Source.  It was too exotic for that.<p>
+
+I had wanted to see if I can make anything out of this type of work.
+I asked people to buy the chips.  Nobody bought one off me directly,
+but I did end up selling a few hundred to Kitsrus.  My return on
+investment was negligible.  I don't consider it worth the effort to
+continue the project.<p>
+
+<hr noshade>
+<h2><a name=faq>Frequently Asked Questions</a></h2>
+
+<ol>
+<li><i>It doesn't work on some serial ports, what to do?</i><p>
+
+Measure the voltage on the supply pins for the microcontroller or the
+sensor.  If it is below 4.75V, then the serial port is not supplying
+enough current.  Options are either (a) change the serial port, (b)
+hook DTR and another signal line together to increase the current, (c)
+substitute another power source for DTR, such as from a 12V plug pack,
+of at least 20mA capacity, (d) use a low-dropout voltage regulator
+instead of the 78L05.<p>
+
+<li><i>It doesn't work on the DS18B20?</i><p>
+
+True.  The code works well for DS1820 sensors.  It works acceptably
+for DS18S20 sensors, with a slight degradation in reading accuracy.
+It doesn't work properly with the DS18B20.<p>
+
+The reason it doesn't work is that the data is in a different format
+inside the sensor.  The bits are used for different purposes.  I do
+have several DS18B20, but have not found the time to work on the
+problem.  I'd also welcome code changes made by others, under the
+GPL.<p>
+
+<li><i>Where is the HEX file?</i><p>
+
+This isn't provided here.  Either buy a preprogrammed chip from <a
+href=#availability>others</a> (which I no longer make any money on),
+or assemble the code yourself from source.<p>
+
+I don't provide the HEX file to people if they send me mail, either,
+because:<p>
+
+<ul>
+<li>I've said it isn't provided by me, and I should be consistent,
+<li>preprogrammed chips are available from others, and I have no wish
+to eat into their business,
+<li>the source is provided here, along with patches to ease assembly
+on other assembler programs,
+<li>the source license does not require that I provide the hex file,
+<li>chip programming software and programming hardware change, and so
+my hex file may not be compatible with your environment,
+<li>assembling from source is not difficult, and there are mailing
+lists (such as gnupic or the piclist) where you can go for help,
+<li>wanting to learn about microcontrollers and electronics by
+constructing this project, and yet being unwilling to do the whole
+job, is inconsistent.
+</ul>
+
+
+</ol>
+
+Got a question?  If you are wanting help, or are willing to help others,
+please visit the <a
+href="http://james.tooraweenah.com/moin/ts">project community page</a>.
+<p>
+
+<hr noshade>
+<h2>Page Change Log</h2>
+<table>
+<tr valign=top><th>Date</th><th>Change</th></tr>
+
+<tr valign=top><td>2006-07-29</td><td>Add Darcs repository and Debian
+package links.</td></tr>
+
+<tr valign=top><td>2006-02-06</td><td>Remove mailing list and add
+Wiki.</td></tr>
+
+<tr valign=top><td>2006-01-03</td><td>Added link to Python implementation of tsl by Asgeir Nilsen.</td></tr>
+
+<tr valign=top><td>2003-06-10</td><td>Corrected QKits location,
+thanks to Dennis Wallace.</td></tr>
+
+<tr valign=top><td>2003-06-04</td><td>Added reasons why the hex file
+is not available.</td></tr>
+
+<tr valign=top><td>2003-03-11</td><td>Tabulated the availability
+matrix.</td></tr>
+
+<tr valign=top><td>2003-01-18</td><td>Patrick Brochu reveals that my
+schematic here has C and F swapped.</td></tr>
+
+<tr valign=top><td>2003-01-10</td><td>Release tsl-1.2.tar.gz to fix off 
+by one day error, reported by Stephen Kitchener in May 2002.</td></tr>
+
+<tr valign=top><td>2002-12-23</td><td>Add FAQ.</td></tr>
+
+<tr valign=top><td>2002-06-26</td><td>Dave Gomez spots an HTML error
+that suppresses most of the page for some web browsers.</td></tr>
+
+<tr valign=top><td>2002-05-10</td><td>Add note about MPASM and TRIS
+instruction.</td></tr>
+
+<tr valign=top><td>2002-01-08</td><td>Release patch for use with gpasm
+0.9.13 or similar, which ignores the IF on line 1262 of
+ds1820.asm.</td></tr>
+
+<tr valign=top><td>2001-12-31</td><td>Release source for program on
+microcontroller.</td></tr>
+
+<tr valign=top><td>2001-07-10</td><td>Add test results for TSL.EXE on
+Microsoft Windows NT style operating systems, and remove request for
+results.  Thanks to Chris Kirby and Lars Karlander.</td></tr>
+
+<tr valign=top><td>2001-04-10</td><td>Fix schematic pull-up resistor
+connections</td></tr>
+
+<tr valign=top><td>2001-04-08</td><td>Release version 1.1 of host data
+logging software</td></tr>
+
+<tr valign=top><td>2001-03-03</td><td>Add emu fat freezer monitor
+link</td></tr>
+
+<tr valign=top><td>2001-01-13</td><td>Release version 1.0 of host data
+logging software, fixing the logging of negative temperatures; the
+microcontroller was not affected</td></tr>
+
+<tr valign=top><td>2000-10-25</td><td>Schematic fix, though it still
+has an error around the pull-up resistor connections</td></tr>
+
+<tr valign=top><td>2000-03-11</td><td>Initial page and release of
+version 0.1 of host data logging software</td></tr>
+
+</table>
+
+<hr noshade>
+<pre>
+Date: Wed, 6 Oct 2004 11:16:39 +1000
+To: peter crowcroft
+From: James Cameron
+Subject: Re: FW: Invoice from Quasar Electronics Limited
+
+Customer wrote:
+> 1. The module lacks any obvious method to allow it to be fitted in a
+> box. I could use the jack posts on the D connector but the thickness
+> of the box material would make the connection less reliable.
+
+The PCB was by Peter.  I agree, there is no obvious method.
+
+> 2. I note that the line separator used in the transmitted data is a
+> linefeed (LF) character, rather than a carriage return (CR). DOS and
+> Windows applications usually use the CR/LF character pair as an end of
+> line marker. I believe that UNIX uses just a CR character.
+
+This is incorrect.  The line separator used is a CR followed by LF, that
+is, 0x0A followed by 0x0D.  See the function tx_crlf in the ds1820.asm
+source file.  This is on line 512.  See the references to the function
+elsewhere; after the welcome message and after each sensor reading.
+
+If the customer is seeing only the LF character, there may have been a
+framing error; where the baud rate of the transmitter does not match the
+receiver.  The CR may have been dropped due to the error.
+
+The most likely causes of a framing error are;
+
+a) incorrect transmitter speed,
+   a.1) incorrect operating voltage, caused by weak serial port,
+   a.2) an overwritten OSCCAL value in PROM, caused by bad programming,
+b) incorrect receiver speed,
+   b.1) faulty receiver clock,
+   b.2) incorrect receiver clock configuration,
+
+Suggested procedure;
+
+1.  optionally confirm that framing errors are occurring, using an
+operating system or application that counts or reports the framing
+errors,
+
+2.  check that the voltage across the power supply pins of the PIC
+12C509 is between 4.75 and 5.25V DC, and if it is outside that range
+then correct it,
+
+3.  check that the bit stream from the PIC 12C509 is being emitted at
+2400 baud, plus or minus 5%,
+
+4.  read back the PROM from the PIC 12C509 using a PIC programmer, and
+examine the OSCCAL value for corruption,
+
+5.  [Kitsrus, Quasar] check that the programming of the PIC 12C509 is
+done from the original HEX file, and *not* from a HEX file read from
+another 12C509, as this would corrupt the OSCCAL value,
+
+If the OSCCAL value is corrupted, this can lead to the PIC RC oscillator
+running at something other than the calibrated frequency.  The OSCCAL
+value is set during factory calibration by Microchip, but can be
+overwritten by programming.
+
+--
+James Cameron
+</pre>
+
+<hr noshade>
+| <a href=mailto:quozl@us.netrek.org><i>quozl@us.netrek.org</i></a>
+| <a href=../>up</a> |
+</body>
+</html>
